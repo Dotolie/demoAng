@@ -1,19 +1,23 @@
 angular.module('app')
-    .factory('todomvcStorage', function () {
+    .factory('todomvcStorage', function ($http) {
 
         var storage= {
-            todos: [{
-                id: 1,
-                title: '요가 수행하기',
-                completed: false
-            }, {
-                id: 2,
-                title: '어머니 용돈 드리기',
-                completed: true
-            }],
+            todos: [],
 
-            get: function () {
-                return storage.todos
+            get: function ( callback ) {
+                $http
+                    .get("/api/todos")
+                    .then(
+                        function success(response) {
+                            console.log(response.data)
+                            storage.todos.push(response.data)
+                            callback(null, angular.copy( response.data, storage.todos|Array ))
+                        },
+                        function error(err) {
+                            console.error(err)
+                            callback(err)
+                        }
+                    )
             },
 
             post: function (todoTitle) {

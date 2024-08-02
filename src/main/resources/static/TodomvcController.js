@@ -1,6 +1,11 @@
 angular.module("app", [])
     .controller("TodomvcCtrl", function ($scope, todomvcStorage) {
-        $scope.todos = todomvcStorage.get()
+        // $scope.todos = todomvcStorage.get()
+        todomvcStorage.get(function (err, todos) {
+            if (err) return
+
+            $scope.todos = todomvcStorage.todos
+        })
 
         $scope.remove = function (id) {
             if (!id) return
@@ -16,6 +21,7 @@ angular.module("app", [])
 
         $scope.$watch("status", function () {
             if ($scope.status === "completed") {
+                $scope.todos = todomvcStorage.todos
                 $scope.statusFilter = {completed: true}
             } else if ($scope.status === "active") {
                 $scope.statusFilter = {completed: false}
